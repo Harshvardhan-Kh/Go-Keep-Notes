@@ -1,0 +1,13 @@
+.task {
+    display: flex;
+    flex-direction: column;
+    border-radius: 10%;
+    border: 1px solid rgb(226, 33, 33);
+    box-shadow: 0 0 23px -3px red;
+    padding: 2px;
+      
+    .task-title{
+        text-align: center;
+
+    }
+}
