@@ -1,63 +1,228 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Home.css";
-import { useState } from "react";
 import Task from "../../components/Task/Task";
+import showToast from "crunchy-toast";
+import { saveTaskTolocalStorage } from "./../../util/localStorage";
 
-const Home = () => {
-  const [keeplist, setKeeplist]= useState([
-    {
-      id: 1,
-      title: "keep your tasks",
-      description: "tasks Description",
-      priority: "highest priority",
-      time: "12:00:00"
-    },
-    {
-      id: 1,
-      title: "keep your tasks",
-      description: "tasks Description",
-      priority: "highest priority",
-      time: "12:00:00"
-    },
-    {
-      id: 1,
-      title: "keep your tasks",
-      description: "tasks Description",
-      priority: "highest priority",
-      time: "12:00:00"
-    },
-    {
-      id: 1,
-      title: "keep your tasks",
-      description: "tasks Description",
-      priority: "highest priority",
-      time: "12:00:00"
-    }
+function Home() {
+  const [taskList, setTaskList] = useState([
+    { id: 1, title: "Task 1", description: "description 1 ", priority: "high" },
   ]);
+
+  const [id, setId] = useState(0);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState("");
+  const [isEdit, setIsEdit] = useState(false);
+
+  // clear input all
+  const clearInputFields = () => {
+    setTitle("");
+    setDescription("");
+    setPriority("");
+  };
+
+  useEffect(() => {
+    const list = JSON.parse(localStorage.getItem("taskbuddy"));
+    if (list && list.length >= 0) {
+      setTaskList(list);
+    }
+  }, []);
+
+  // find task by id func code
+  const findTaskIndexById = (taskId) => {
+    let index;
+    taskList.forEach((task, i) => {
+      if (task.id === taskId) {
+        index = i;
+      }
+    });
+    return index;
+  };
+
+  // Save Task to Local Storage  // send code to util/localStorage.js
+
+  // add task btn
+
+  // this code for when we update any task in localStorage and fill empty string [ input] you will get error/alert
+  // or  this code for you must enter all feild to input otherwise get error
+
+  const checkRequiredField = () => {
+    if (!title) {
+      showToast("Title is Required", "alert", 3000);
+      return false;
+    }
+    if (!description) {
+      showToast("Description is Required", "alert", 3000);
+      return false;
+    }
+    if (!priority) {
+      showToast("Priority is Required", "alert", 3000);
+      return false;
+    }
+    return true;
+  };
+
+  const addTaskToLink = () => {
+    if (checkRequiredField() === false) {
+      return;
+    }
+
+    const randomId = Math.floor(Math.random() * 1000);
+
+    const obj = {
+      id: randomId,
+      title: title,
+      description: description,
+      priority: priority,
+    };
+    const newTaskList = [...taskList, obj];
+
+    setTaskList(newTaskList);
+
+    clearInputFields();
+
+    setTaskList([...taskList, obj]);
+
+    saveTaskTolocalStorage(newTaskList);
+
+    // crunchy-tost lab
+    showToast("Task Added Succesfully", "success", 3000);
+  };
+
+  // Delete Task Button
+  const removeTaskFromList = (id) => {
+    const index = findTaskIndexById(id); // to find task id
+    const tempArray = taskList;
+    tempArray.splice(index, 1);
+
+    setTaskList([...tempArray]);
+    saveTaskTolocalStorage(tempArray);
+
+    // crunchy-toast
+    showToast("Task Deleted successfully !", "error", 2000);
+  };
+
+  // Edit/Update Task Button
+
+  const setTaskEditable = (id) => {
+    setIsEdit(true);
+    setId(id);
+
+    const index = findTaskIndexById(id);
+
+    const currentEditTask = taskList[index]; // to find task id
+
+    // set tASK TO EDIT/update
+    setTitle(currentEditTask.title);
+    setDescription(currentEditTask.description);
+    setPriority(currentEditTask.priority);
+  };
+
+  const updateTask = (task) => {
+    
+    if (checkRequiredField() === false) {
+      return;
+    }
+
+    const indexToUpdate = findTaskIndexById(id); // to find task id
+
+    const tempArray = taskList;
+    tempArray[indexToUpdate] = {
+      id: id,
+      title: title,
+      description: description,
+      priority: priority,
+    };
+
+    setTaskList([...tempArray]);
+
+    saveTaskTolocalStorage(tempArray);
+
+    clearInputFields();
+    setIsEdit(false);
+
+    // crunchy-toast
+    showToast("Task Updated successfully !", "info", 3000);
+  };
+
   return (
     <>
       <div className="container">
-        <h1 className="app-title">Title</h1>
-        <div className="keep-flex-container">
-          <div className="keep-flex scroll-cont">
-            <h2 className="list-group-item">Keep-Tasks</h2>
-            <div className="list-group">
-            {
-              keeplist.map((taskitem, index) => {
-                const {id, title, description, priority, time} = taskitem;
-                return <Task id={id} title={title} description={description} priority={priority} time={time} />
-              })
-            }
-            </div>
-          </div>
+        <h1 className="app-title">🎯 Go-Keep-Notes 🎯</h1>
+      </div>
 
-          <div className="keep-flex">
-            <h2 className="list-group-item">Add-Tasks</h2>
+      <div className="todo-flex-container">
+        <div>
+          <h1 className="text-center">
+            Show List <i className="fa-solid fa-list"></i>
+          </h1>
+          <div className="task-main-container">
+            {" "}
+            {taskList.map((taskItem, index) => {
+              const { id, title, description, priority } = taskItem;
+
+              return (
+                <Task
+                  id={id}
+                  title={title}
+                  description={description}
+                  priority={priority}
+                  key={index}
+                  removeTaskFromList={removeTaskFromList}
+                  object={taskItem}
+                  setTaskEditable={setTaskEditable}
+                />
+              );
+            })}
+          </div>
+        </div>
+
+        <div>
+          <h1 className="text-center">
+            {isEdit ? `Update Task ${id}` : "Add Task"}
+          </h1>
+          <div className="add-task-container">
+            <form action="">
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Enter Task Here"
+                className="task-input"
+              />
+              <input
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter Description  Here"
+                className="task-input"
+              />
+              <input
+                type="text"
+                value={priority}
+                onChange={(e) => setPriority(e.target.value)}
+                placeholder="Enter Priority Here"
+                className="task-input"
+              />
+
+              <div className="btn-container">
+                <button
+                  type="button"
+                  className="btn-add-task"
+                  onClick={() => {
+                    isEdit ? updateTask() : addTaskToLink();
+                  }}
+                >
+                  {isEdit ? "Update" : "Add"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
     </>
   );
-};
+}
 
 export default Home;
