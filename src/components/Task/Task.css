@@ -6,7 +6,7 @@
   margin: 10px;
   padding: 10px;
   border-radius: 10px;
-  border: 1px solid #0099ff;
+  border: 1px solid #fff78a;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   position: relative;
 }
@@ -21,8 +21,8 @@
   position: absolute;
   right: 0;
   top: 0;
-  background-color: #0099ff;
-  color: #fff;
+  background-color: #fff78a;
+  color: #ff0000;
   border-radius: 0 10px 0 0;
   padding: 4px;
   width: 80px;
@@ -33,7 +33,7 @@
   display: block;
   width: 300px;
   font-size: 18px;
-  border: 1px solid #0099ff;
+  border: 1px solid #fff78a;
   border-radius: 10px;
   padding: 20px 10px;
   margin: 30px 10px;
@@ -41,11 +41,11 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 ::placeholder {
-  color: #0092cc;
+  color: #ff0000;
 }
 .btn-add-task {
-  background-color: #0099ff;
-  color: white;
+  background-color: #fff78a;
+  color: rgb(243, 0, 0);
   border-radius: 25px 25px 25px 25px;
   padding: 15px 10px !important;
   /* display: block !important; */
@@ -58,7 +58,7 @@
   width: 160px !important;
 }
 .btn-add-task:hover {
-  background-color: #0092cc;
+  background-color: #fff78a;
   border: none;
 }
 .btn-container {
@@ -73,7 +73,7 @@
   bottom: 5px;
   height: 21px;
   border-radius: 50%;
-  border: 2px solid #0099ff;
+  border: 2px solid #fff78a;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
